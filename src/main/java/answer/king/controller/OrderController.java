@@ -21,21 +21,42 @@ public class OrderController {
 	@Autowired
 	private OrderService orderService;
 
+	/**
+	 * Get all the orders saved in the database
+	 * @return List<Order>
+	 */
 	@RequestMapping(method = RequestMethod.GET)
 	public List<Order> getAll() {
 		return orderService.getAll();
 	}
 
+	/**
+	 * Create a new order
+	 * @return Order
+	 */
 	@RequestMapping(method = RequestMethod.POST)
 	public Order create() {
 		return orderService.save(new Order());
 	}
 
-	@RequestMapping(value = "/{id}/addItem/{itemId}", method = RequestMethod.PUT)
-	public void addItem(@PathVariable("id") Long id, @PathVariable("itemId") Long itemId) {
-		orderService.addItem(id, itemId);
+	/**
+	 * Add a new line item to an existing order
+	 * @param id
+	 * @param itemId
+	 * @param quantity
+	 * @return Order
+	 */
+	@RequestMapping(value = "/{id}/addItem/{itemId}/{quantity}", method = RequestMethod.PUT)
+	public Order addItem(@PathVariable("id") Long id, @PathVariable("itemId") Long itemId, @PathVariable("quantity") int quantity) {
+		return orderService.addLineItem(id, itemId, quantity);
 	}
 
+	/**
+	 * Pay the order and return a receipt for the payment
+	 * @param id
+	 * @param payment
+	 * @return Receipt
+	 */
 	@RequestMapping(value = "/{id}/pay", method = RequestMethod.PUT)
 	public Receipt pay(@PathVariable("id") Long id, @RequestBody BigDecimal payment) {
 		return orderService.pay(id, payment);
